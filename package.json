@@ -1,0 +1,21 @@
+{
+  "name": "laravel-blade-parser",
+  "version": "1.0.0",
+  "description": "NPM Package that parse blade templates into HTML.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blade",
+    "parser",
+    "laravel"
+  ],
+  "author": "Pavel Belyaev",
+  "license": "MIT",
+  "dependencies": {
+    "fs": "0.0.2",
+    "htmlparser2": "^3.9.0",
+    "path": "^0.12.7"
+  }
+}
