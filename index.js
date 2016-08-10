@@ -52,10 +52,9 @@ class LaravelBladeParser
      */
     _parse(content)
     {
-        var template = content,
-            items = {};
+        var items = {};
 
-        template.replace(this.options.regex.extends, (match, value) => {
+        return template.replace(this.options.regex.extends, (match, value) => {
             let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php');
             
             return this._getFileContent(filePath);
@@ -75,8 +74,6 @@ class LaravelBladeParser
             
             return this._parse(html);
         });
-        
-        return template;
     }
 
     /**
