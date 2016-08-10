@@ -16,7 +16,7 @@ class LaravelBladeParser
             folder: './resources/views',
             path: './resources/views/welcome.blade.php',
             regex: {
-                include: /@include\(\s*[\'\"]([^\[\]]*)[\'\"]\s*(?:(?:.*[^\s\)])\s*)*\s*\)/gi,
+                include: /@include\(\s*[\'\"]([^\[\]\'\"]*)[\'\"]\s*(?:(?:.*[^\s\)])\s*)*\s*\)/gi,
                 extends: /@extends\((?:[\'\"])(.*)(?:[\'\"])\)/gi,
                 yield: /@yield\([\'\"]?([^\'\"]*)[\'\"]?\)/gi,
                 multiLineSection: /@section\(\s*[\'\"]?([^\'\"]*)[\'\"]?\s*\)((?!\@stop).*\s*)*\@stop/gi,
