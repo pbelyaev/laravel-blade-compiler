@@ -1,6 +1,6 @@
 {
   "name": "laravel-blade-parser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "NPM Package that parse blade templates into HTML.",
   "main": "index.js",
   "scripts": {
@@ -11,9 +11,9 @@
     "parser",
     "laravel"
   ],
-  "repository": { 
-    "type" : "git", 
-    "url" : "https://github.com/pbelyaev/laravel-bem-parser.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pbelyaev/laravel-bem-parser.git"
   },
   "author": "Pavel Belyaev",
   "license": "MIT",
