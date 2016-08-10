@@ -54,7 +54,7 @@ class LaravelBladeParser
     {
         var items = {};
 
-        return template.replace(this.options.regex.extends, (match, value) => {
+        return content.replace(this.options.regex.extends, (match, value) => {
             let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php');
             
             return this._getFileContent(filePath);
