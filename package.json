@@ -1,6 +1,6 @@
 {
   "name": "laravel-blade-parser",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "NPM Package that parse blade templates into HTML.",
   "main": "index.js",
   "scripts": {
