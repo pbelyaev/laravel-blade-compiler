@@ -85,14 +85,12 @@ class LaravelBladeParser
 			if (stacks[key] == undefined) stacks[key] = [];
 
 			stacks[key].push(value);
-			console.log(stacks);
 
 			return "";
 		}).replace(this.options.regex.multiLinePush, (match, key, value) => {
 			if (stacks[key] == undefined) stacks[key] = [];
 
 			stacks[key].push(value);
-			console.log(stacks);
 
 			return "";
 		}).replace(this.options.regex.stack, (match, key) => {
