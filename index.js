@@ -19,7 +19,7 @@ class LaravelBladeParser
                 include: /@include\(\s*[\'\"]([^\[\]\'\"]*)[\'\"]\s*(?:(?:.*[^\s\)])\s*)*\s*\)/gi,
                 extends: /@extends\((?:[\'\"])(.*)(?:[\'\"])\)/gi,
                 yield: /@yield\([\'\"]?([^\'\"]*)[\'\"]?\)/gi,
-                multiLineSection: /@section\(\s*[\'\"]?([^\'\"]*)[\'\"]?\s*\)((?!\@stop).*\s*)*\@stop/gi,
+                multiLineSection: /@section\(\s*[\'\"]?([^\'\"]*)[\'\"]?\s*\)((?!\@stop|\@endsection).*\s*)*(?:\@stop|\@endsection)/gi,
                 oneLineSection: /@section\([\'\"]([^\'\"]*)[\'\"]?\s*\,\s*[\'\"]?([^\"\']*)[\'\"]?\)/gi
             },
             encoding: 'utf8'
