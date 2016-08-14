@@ -16,11 +16,18 @@ class LaravelBladeParser
             folder: './resources/views',
             path: './resources/views/welcome.blade.php',
             regex: {
-                include: /@include\(\s*[\'\"]([^\[\]\'\"]*)[\'\"]\s*(?:(?:.*[^\s\)])\s*)*\s*\)/gi,
-                extends: /@extends\((?:[\'\"])(.*)(?:[\'\"])\)/gi,
-                yield: /@yield\([\'\"]?([^\'\"]*)[\'\"]?\)/gi,
-                multiLineSection: /@section\(\s*[\'\"]?([^\'\"]*)[\'\"]?\s*\)((?!\@stop|\@endsection).*\s*)*(?:\@stop|\@endsection)/gi,
-                oneLineSection: /@section\([\'\"]([^\'\"]*)[\'\"]?\s*\,\s*[\'\"]?([^\"\']*)[\'\"]?\)/gi
+                include: /\@include\(\s*[\'\"]([^\[\]\'\"]*)[\'\"]\s*(?:(?:.*[^\s\)])\s*)*\s*\)/gi,
+
+				extends: /\@extends\((?:[\'\"])(.*)(?:[\'\"])\)/gi,
+
+				yield: /\@yield\([\'\"]?([^\'\"]*)[\'\"]?\)/gi,
+				stack: /\@stack\(\s*[\'\"]\s*([^\'\"]*)[\'\"]\)/gmi,
+
+				oneLinePush: /\@push\([\'\"]([^\'\"]*)[\'\"]\s*\,\s*[\"\']?([^\'\"\)]*)[\'\"]?\s*\)/gi,
+				multiLinePush: /\@push\(\s*[\'\"]\s*([^\'\"]*)[\'\"]\s*\)((?:(?!\@endpush|\@stop).*\s*)*)*(?:\@endpush|\@stop)/gi,
+
+                oneLineSection: /\@section\([\'\"]([^\'\"]*)[\'\"]?\s*\,\s*[\'\"]?([^\"\'\)]*)[\'\"]?\)/gi,
+				multiLineSection: /\@section\(\s*[\'\"]?([^\'\"]*)[\'\"]?\s*\)((?:(?!\@stop|\@endsection).*\s*)*)*(?:\@stop|\@endsection)/gi
             },
             encoding: 'utf8'
         };
@@ -52,28 +59,55 @@ class LaravelBladeParser
      */
     _parse(content)
     {
-        var items = {};
+        var sections = {},
+			stacks = {};
 
         return content.replace(this.options.regex.extends, (match, value) => {
             let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php');
-            
+
             return this._getFileContent(filePath);
         }).replace(this.options.regex.oneLineSection, (match, key, value) => {
-            items[key] = value;
+            sections[key] = value;
 
             return "";
         }).replace(this.options.regex.multiLineSection, (match, key, value) => {
-            items[key] = value;
+            sections[key] = value;
 
             return "";
         }).replace(this.options.regex.yield, (match, key) => {
-            return typeof items[key] == "undefined" ? "" : items[key];
+            return typeof sections[key] == "undefined" ? "" : sections[key];
         }).replace(this.options.regex.include, (match, value) => {
             let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php'),
                 html = this._getFileContent(filePath);
-            
+
             return this._parse(html);
-        });
+        }).replace(this.options.regex.oneLinePush, (match, key, value) => {
+			if (stacks[key] == undefined) stacks[key] = [];
+
+			stacks[key].push(value);
+			console.log(stacks);
+
+			return "";
+		}).replace(this.options.regex.multiLinePush, (match, key, value) => {
+			if (stacks[key] == undefined) stacks[key] = [];
+
+			stacks[key].push(value);
+			console.log(stacks);
+
+			return "";
+		}).replace(this.options.regex.stack, (match, key) => {
+			if (stacks[key] != undefined) {
+				let html = "";
+
+				stacks[key].forEach((item) => {
+					html += item;
+				});
+
+				return html;
+			}
+
+			return "";
+		});
     }
 
     /**
