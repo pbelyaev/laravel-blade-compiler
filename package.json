@@ -18,7 +18,6 @@
   "author": "Pavel Belyaev",
   "license": "MIT",
   "dependencies": {
-    "fs": "0.0.2",
     "htmlparser2": "^3.9.0",
     "path": "^0.12.7"
   }
