@@ -4,7 +4,7 @@
   "description": "NPM Package that parse blade templates into HTML.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test"
   },
   "keywords": [
     "blade",
@@ -19,5 +19,9 @@
   "license": "MIT",
   "dependencies": {
     "htmlparser2": "^3.9.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2"
   }
 }
