@@ -15,6 +15,7 @@ class LaravelBladeParser
         this.defaultOptions = {
             folder: './resources/views',
             path: './resources/views/welcome.blade.php',
+            extends: true,
             regex: {
                 include: /\@include\(\s*[\'\"]([^\[\]\'\"]*)[\'\"]\s*(?:(?:.*[^\s\)])\s*)*\s*\)/gi,
 
@@ -62,21 +63,24 @@ class LaravelBladeParser
         var sections = {},
 			stacks = {};
 
-        return content.replace(this.options.regex.extends, (match, value) => {
-            let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php');
+        if (this.options.extends) {
+            content =  content.replace(this.options.regex.extends, (match, value) => {
+                let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php');
 
-            return this._getFileContent(filePath);
-        }).replace(this.options.regex.oneLineSection, (match, key, value) => {
-            sections[key] = value;
+                return this._getFileContent(filePath);
+            }).replace(this.options.regex.oneLineSection, (match, key, value) => {
+                sections[key] = value;
 
-            return "";
-        }).replace(this.options.regex.multiLineSection, (match, key, value) => {
-            sections[key] = value;
+                return "";
+            }).replace(this.options.regex.multiLineSection, (match, key, value) => {
+                sections[key] = value;
 
-            return "";
-        }).replace(this.options.regex.yield, (match, key) => {
-            return typeof sections[key] == "undefined" ? "" : sections[key];
-        }).replace(this.options.regex.include, (match, value) => {
+                return "";
+            }).replace(this.options.regex.yield, (match, key) => {
+                return typeof sections[key] == "undefined" ? "" : sections[key];
+            });
+        }
+        content = content. replace(this.options.regex.include, (match, value) => {
             let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php'),
                 html = this._getFileContent(filePath);
 
@@ -106,6 +110,8 @@ class LaravelBladeParser
 
 			return "";
 		});
+
+        return content;
     }
 
     /**
