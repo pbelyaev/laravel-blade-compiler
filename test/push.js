@@ -10,7 +10,7 @@ describe('@push directive', function () {
 
     it('should be passed if everything is okay', function () {
 
-        expect(html.trim().replace("\n\n", "")).to.be.equals("Hello, world!");
+        expect(html.trim().replace(/\r|\n/g, "")).to.be.equals("Hello, world!");
 
     });
     
