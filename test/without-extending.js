@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
 var lib = require('../');
 
-describe('@extents are disabled', function () {
+describe('@extends are disabled', function () {
 
     var html = lib({
         folder: 'test/examples',
