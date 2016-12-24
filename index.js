@@ -14,6 +14,8 @@ class LaravelBladeParser
             path: './resources/views/welcome.blade.php',
             extends: true,
             regex: {
+                comments: /\{\{\-\-.*\-\-\}\}/gi,
+
                 include: /\@include\(\s*[\'\"]([^\[\]\'\"]*)[\'\"]\s*(?:(?:.*[^\s\)])\s*)*\s*\)/gi,
 
 				extends: /\@extends\((?:[\'\"])(.*)(?:[\'\"])\)/gi,
@@ -58,6 +60,9 @@ class LaravelBladeParser
     {
         let sections = {},
 			stacks = {};
+
+        // remove comments
+        content = content.replace(this.options.regex.comments, match => "");
 
         // @extends directive
         if (this.options.extends) {
