@@ -1,8 +1,5 @@
-"use strict";
-
-const htmlparser    = require('htmlparser2'),
-      fs            = require('fs'),
-      path          = require('path');
+const fs    = require('fs'),
+      path  = require('path');
 
 class LaravelBladeParser
 {
@@ -22,10 +19,9 @@ class LaravelBladeParser
 				extends: /\@extends\((?:[\'\"])(.*)(?:[\'\"])\)/gi,
 
 				yield: /\@yield\([\'\"]?([^\'\"]*)[\'\"]?\)/gi,
-				stack: /\@stack\(\s*[\'\"]\s*([^\'\"]*)[\'\"]\)/gmi,
+				stack: /\@stack\(\s*[\'\"](.*)[\'\"]\)/gi,
 
-				oneLinePush: /\@push\([\'\"]([^\'\"]*)[\'\"]\s*\,\s*[\"\']?([^\'\"\)]*)[\'\"]?\s*\)/gi,
-				multiLinePush: /\@push\(\s*[\'\"]\s*([^\'\"]*)[\'\"]\s*\)((?:(?!\@endpush|\@stop).*\s*)*)*(?:\@endpush|\@stop)/gi,
+                push: /\@push\(\s*[\'\"]\s*(.*)[\'\"]\s*\)((?!\@endpush|\@stop).*\s*)*(?:\@endpush|\@stop)|\@push\([\'\"](.*)[\'\"]\s*\,\s*[\"|\'](.*)[\"|\']\s*\)/gi,
 
                 oneLineSection: /\@section\([\'\"]([^\'\"]*)[\'\"]?\s*\,\s*[\'\"]?([^\"\'\)]*)[\'\"]?\)/gi,
 				multiLineSection: /\@section\(\s*[\'\"]?([^\'\"]*)[\'\"]?\s*\)((?:(?!\@stop|\@endsection).*\s*)*)*(?:\@stop|\@endsection)/gi
@@ -60,9 +56,10 @@ class LaravelBladeParser
      */
     _parse(content)
     {
-        var sections = {},
+        let sections = {},
 			stacks = {};
 
+        // @extends directive
         if (this.options.extends) {
             content =  content.replace(this.options.regex.extends, (match, value) => {
                 let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php');
@@ -80,30 +77,35 @@ class LaravelBladeParser
                 return typeof sections[key] == "undefined" ? "" : sections[key];
             });
         }
-        content = content. replace(this.options.regex.include, (match, value) => {
+
+        // @include directive
+        content = content.replace(this.options.regex.include, (match, value) => {
             let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php'),
                 html = this._getFileContent(filePath);
 
             return this._parse(html);
-        }).replace(this.options.regex.oneLinePush, (match, key, value) => {
-			if (stacks[key] == undefined) stacks[key] = [];
+        });
+
+        // @push directive
+        content = content.replace(this.options.regex.push, (match, firstKey, firstValue, secondKey, secondValue) => {
+            let key = secondKey != undefined ? secondKey : firstKey,
+                value = secondValue != undefined ? secondValue : firstValue;
+
+            if (stacks[key] == undefined) {
+			    stacks[key] = [];
+            }
 
 			stacks[key].push(value);
 
 			return "";
-		}).replace(this.options.regex.multiLinePush, (match, key, value) => {
-			if (stacks[key] == undefined) stacks[key] = [];
+		});
 
-			stacks[key].push(value);
-
-			return "";
-		}).replace(this.options.regex.stack, (match, key) => {
+        // @stack directive
+        content = content.replace(this.options.regex.stack, (match, key) => {
 			if (stacks[key] != undefined) {
 				let html = "";
 
-				stacks[key].forEach((item) => {
-					html += item;
-				});
+				stacks[key].forEach(item => html += item);
 
 				return html;
 			}
