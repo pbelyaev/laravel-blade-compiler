@@ -10,7 +10,17 @@
 <p>I don't know what else to say.</p>
 @stop
 
-@section('third')
+@section('fourth')
 @parent
-<p>Hello, world! Again.</p>
+<p>Hello, world!</p>
+@stop
+
+@section('fifth')
+@parent
+<p>Hello, world!</p>
+@endsection
+
+@section('fifth')
+@parent
+<p>Hello, world!</p>
 @stop
