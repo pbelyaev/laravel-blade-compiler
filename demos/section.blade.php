@@ -9,3 +9,8 @@
 @section('third')
 <p>I don't know what else to say.</p>
 @stop
+
+@section('third')
+@parent
+<p>Hello, world! Again.</p>
+@stop
