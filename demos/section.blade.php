@@ -14,13 +14,3 @@
 @parent
 <p>Hello, world!</p>
 @stop
-
-@section('fifth')
-@parent
-<p>Hello, world!</p>
-@endsection
-
-@section('fifth')
-@parent
-<p>Hello, world!</p>
-@stop
