@@ -23,10 +23,10 @@ class LaravelBladeParser
 				yield: /\@yield\([\'\"]?([^\'\"]*)[\'\"]?\)/gi,
 				stack: /\@stack\(\s*[\'\"](.*)[\'\"]\)/gi,
 
-                push: /\@push\(\s*[\'\"]\s*(.*)[\'\"]\s*\)((?!\@endpush|\@stop).*\s*)*(?:\@endpush|\@stop)|\@push\([\'\"](.*)[\'\"]\s*\,\s*[\"|\'](.*)[\"|\']\s*\)/gi,
+                push: /\@push\(\s*[\'\"]\s*(.*)[\'\"]\s*\)((?:(?!\@endpush|\@stop).*\s*)*)(?:\@endpush|\@stop)|\@push\([\'\"](.*)[\'\"]\s*\,\s*[\"|\'](.*)[\"|\']\s*\)/gi,
 
-                oneLineSection: /\@section\([\'\"]([^\'\"]*)[\'\"]?\s*\,\s*[\'\"]?([^\"\'\)]*)[\'\"]?\)/gi,
-				multiLineSection: /\@section\(\s*[\'\"]?([^\'\"]*)[\'\"]?\s*\)((?:(?!\@stop|\@endsection).*\s*)*)*(?:\@stop|\@endsection)/gi
+                section: /\@section\([\'\"](.*)[\'\"]\s*\,\s*[\'\"](.*)[\'\"]\)|\@section\(\s*[\'\"](.*)[\'\"]\s*\)((?:(?!\@show|\@stop|\@endsection).*\s*)*)(\@show|\@stop|\@endsection)/gi,
+                showSection: /\@section\(\s*[\'\"](.*)[\'\"]\s*\)((?:(?!\@show).*\s*)*)(?:\@show)/gi,
             },
             encoding: 'utf8'
         };
@@ -48,7 +48,7 @@ class LaravelBladeParser
      */
     _init()
     {
-        this.html = this._parse(this._getFileContent(this.options.path));
+        this.html = this._compile(this._getFileContent(this.options.path));
     }
 
     /**
@@ -56,7 +56,7 @@ class LaravelBladeParser
      *
      * @private
      */
-    _parse(content)
+    _compile(content)
     {
         let sections = {},
 			stacks = {};
@@ -66,29 +66,36 @@ class LaravelBladeParser
 
         // @extends directive
         if (this.options.extends) {
-            content =  content.replace(this.options.regex.extends, (match, value) => {
+            content = content.replace(this.options.regex.extends, (match, value) => {
                 let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php');
 
                 return this._getFileContent(filePath);
-            }).replace(this.options.regex.oneLineSection, (match, key, value) => {
-                sections[key] = value;
-
-                return "";
-            }).replace(this.options.regex.multiLineSection, (match, key, value) => {
-                sections[key] = value;
-
-                return "";
-            }).replace(this.options.regex.yield, (match, key) => {
-                return typeof sections[key] == "undefined" ? "" : sections[key];
             });
         }
 
         // @include directive
-        content = content.replace(this.options.regex.include, (match, value) => {
-            let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php'),
-                html = this._getFileContent(filePath);
+        content = this._compileIncludes(content);
 
-            return this._parse(html);
+        // @section directive
+        content = content.replace(this.options.regex.section, (match, firstKey, firstValue, secondKey, secondValue, type) => {
+            let key = secondKey != undefined ? secondKey : firstKey,
+                value = secondValue != undefined ? secondValue : firstValue;
+
+            if (type == "@show") {
+                sections[key] = sections[key] != undefined ? sections[key] : "";
+                sections[key] = value.replace(/\@parent/gi, "");
+
+                return `@yield('${key}')`;
+            }
+
+            if (value.match(/\@parent/g)) {
+                sections[key] = sections[key] != undefined ? sections[key] : "";
+                sections[key] += value.replace(/\@parent/gi, "");
+            } else {
+                sections[key] = value;
+            }
+
+            return "";
         });
 
         // @push directive
@@ -118,7 +125,27 @@ class LaravelBladeParser
 			return "";
 		});
 
+        // @yield directive
+        content = content.replace(this.options.regex.yield, (match, key) => {
+            return sections[key] == undefined ? "" : sections[key];
+        });
+
         return content;
+    }
+
+    /**
+     * @param html
+     * @returns {XML|void|string|*}
+     * @private
+     */
+    _compileIncludes(html)
+    {
+        return html.replace(this.options.regex.include, (match, value) => {
+            let filePath = path.join(this.options.folder, value.replace(/\./gi, "/") + '.blade.php'),
+                html = this._getFileContent(filePath);
+
+            return this._compileIncludes(html);
+        });
     }
 
     /**

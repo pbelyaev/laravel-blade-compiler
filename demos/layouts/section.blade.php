@@ -4,4 +4,8 @@
 
 @yield('third')
 
-@yield('fourth')
+@section('fourth')
+<p>Fourth parent.</p>
+@show
+
+@yield('it-has-to-be-removed')
