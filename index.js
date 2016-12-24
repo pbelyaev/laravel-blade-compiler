@@ -59,6 +59,9 @@ class LaravelBladeParser
         let sections = {},
 			stacks = {};
 
+        // remove comments
+        content = content.replace(this.options.regex.comments, match => "");
+
         // @extends directive
         if (this.options.extends) {
             content =  content.replace(this.options.regex.extends, (match, value) => {
