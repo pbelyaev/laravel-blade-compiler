@@ -14,6 +14,8 @@ class LaravelBladeParser
             path: './resources/views/welcome.blade.php',
             extends: true,
             regex: {
+                comments: /\{\{\-\-.*\-\-\}\}/gi,
+
                 include: /\@include\(\s*[\'\"]([^\[\]\'\"]*)[\'\"]\s*(?:(?:.*[^\s\)])\s*)*\s*\)/gi,
 
 				extends: /\@extends\((?:[\'\"])(.*)(?:[\'\"])\)/gi,
