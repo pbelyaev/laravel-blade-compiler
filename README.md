@@ -7,7 +7,7 @@
 
 This package compile laravel blade templates to HTML.
  
- ## Installation
+## Installation
  
  Via Yarn:
  ```console
