@@ -1,6 +1,6 @@
 {
   "name": "laravel-blade-compiler",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "NPM Package that compile Blade template language to HTML",
   "main": "index.js",
   "scripts": {
