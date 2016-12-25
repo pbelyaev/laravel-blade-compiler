@@ -38,6 +38,6 @@ var compiledHTML = laravelBladeCompiler({
 | Name | Type | Default value | Description |
 |---|---|---|---|
 | extends | boolean | true | Enable/disable compiling @extends directives |
-| folder | string | ./resources/views | Path to the views directory. |
+| folder | string | ./resources/views | Path to the views directory |
 | encoding | string | utf8 | Blade templates encoding |
 | path | string | ./resources/views/welcome.blade.php | Path to the compiled blade template file |
