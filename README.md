@@ -8,6 +8,7 @@
 This package compile laravel blade templates to HTML.
  
  ## Installation
+ 
  Via Yarn:
  ```console
  $ yarn add laravel-blade-compiler
@@ -18,6 +19,7 @@ This package compile laravel blade templates to HTML.
  ```
 
 ## Usage
+
 Require the package like so:
  ```js
 var laravelBladeCompiler = require('laravel-blade-compiler');
