@@ -17,9 +17,6 @@
   },
   "author": "Pavel Belyaev",
   "license": "MIT",
-  "dependencies": {
-    "htmlparser2": "^3.9.0"
-  },
   "devDependencies": {
     "ava": "^0.17.0"
   },
